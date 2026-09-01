@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>퇴근하시겠습니까?</title>
+<style>
+  :root{
+    --bg:#f4f5ff;
+    --surface:#ffffff;
+    --surface-soft:#f8f8ff;
+    --text:#23263a;
+    --muted:#7d8197;
+    --line:#e8e9f3;
+    --primary:#7868f3;
+    --primary-2:#9a8cff;
+    --primary-soft:#ece9ff;
+    --nav:#ffffff;
+    --success:#53b693;
+    --shadow:0 16px 40px rgba(84,76,154,.12);
+    --radius:24px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;background:var(--bg);color:var(--text)}
+  body{min-height:100dvh}
+  button,input{font:inherit}
+
+  .app{
+    min-height:100dvh;
+    max-width:520px;
+    margin:0 auto;
+    background:
+      radial-gradient(circle at 15% 5%, rgba(138,123,255,.13), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(110,166,255,.11), transparent 24%),
+      var(--bg);
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  .screen{display:none;min-height:100dvh}
+  .screen.active{display:flex;flex-direction:column}
+
+  .login-screen{
+    padding:28px 22px max(30px, env(safe-area-inset-bottom));
+    justify-content:center;
+  }
+
+  .login-shell{
+    width:100%;
+    background:var(--surface);
+    border-radius:32px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    border:1px solid rgba(124,109,245,.08);
+  }
+
+  .login-visual{
+    min-height:250px;
+    padding:30px 26px 24px;
+    background:linear-gradient(145deg,#f0efff 0%,#f7f7ff 54%,#eef7ff 100%);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    letter-spacing:.02em;
+    color:#312f5b;
+  }
+
+  .brand-mark{
+    width:32px;height:32px;border-radius:11px;
+    background:linear-gradient(135deg,var(--primary),#a9a1ff);
+    position:relative;
+    box-shadow:0 8px 18px rgba(120,104,243,.25);
+  }
+  .brand-mark:before,.brand-mark:after{
+    content:"";position:absolute;background:#fff;border-radius:6px;
+  }
+  .brand-mark:before{width:8px;height:8px;left:7px;top:7px;box-shadow:10px 0 0 #fff,0 10px 0 #fff,10px 10px 0 #fff}
+  .brand-mark:after{display:none}
+
+  .desk-art{
+    margin:18px auto 0;
+    width:190px;height:130px;
+    position:relative;
+  }
+  .monitor{position:absolute;left:42px;top:6px;width:108px;height:70px;border-radius:13px;background:#fff;box-shadow:0 12px 25px rgba(90,88,150,.12);border:1px solid #e4e4f3}
+  .monitor:before{content:"";position:absolute;left:50%;bottom:-18px;width:8px;height:18px;background:#cfd2e7;transform:translateX(-50%)}
+  .monitor:after{content:"";position:absolute;left:50%;bottom:-23px;width:42px;height:7px;border-radius:8px;background:#d8dbea;transform:translateX(-50%)}
+  .screen-lines{position:absolute;left:56px;top:21px;width:80px;height:40px}
+  .screen-lines i{display:block;height:7px;border-radius:8px;margin:0 0 7px;background:#dcd8ff}
+  .screen-lines i:nth-child(2){width:62px;background:#e8e7f5}
+  .screen-lines i:nth-child(3){width:45px;background:#ecebf7}
+  .desk{position:absolute;left:18px;right:18px;bottom:8px;height:12px;border-radius:7px;background:#c8b79e}
+  .cup{position:absolute;right:20px;bottom:25px;width:26px;height:30px;border-radius:7px 7px 10px 10px;background:#8bb8ff}
+  .plant{position:absolute;left:12px;bottom:23px;width:26px;height:23px;background:#f0b488;border-radius:4px 4px 8px 8px}
+  .plant:before,.plant:after{content:"";position:absolute;width:18px;height:32px;border-radius:50%;background:#76c5a3;bottom:13px}
+  .plant:before{left:-3px;transform:rotate(-24deg)}
+  .plant:after{right:-4px;transform:rotate(28deg)}
+
+  .login-copy h1{
+    margin:0;
+    font-size:28px;
+    line-height:1.25;
+    letter-spacing:-.04em;
+  }
+  .login-copy p{
+    margin:10px 0 0;
+    color:var(--muted);
+    line-height:1.65;
+    font-size:14px;
+  }
+
+  .login-form{
+    padding:28px 24px 26px;
+  }
+  .eyebrow{
+    color:var(--primary);
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .login-form h2{
+    margin:8px 0 6px;
+    font-size:24px;
+    letter-spacing:-.04em;
+  }
+  .login-form .desc{
+    color:var(--muted);
+    font-size:14px;
+    margin:0 0 20px;
+  }
+  .field-label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .name-input{
+    width:100%;
+    height:54px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:0 16px;
+    outline:none;
+    background:#fbfbff;
+    color:var(--text);
+    transition:.2s;
+  }
+  .name-input:focus{
+    border-color:#b7adff;
+    box-shadow:0 0 0 4px rgba(120,104,243,.1);
+    background:#fff;
+  }
+  .primary-btn{
+    width:100%;
+    height:54px;
+    border:none;
+    border-radius:16px;
+    margin-top:14px;
+    color:white;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--primary),#8f7eff);
+    box-shadow:0 12px 24px rgba(120,104,243,.25);
+    cursor:pointer;
+  }
+  .primary-btn:active{transform:translateY(1px)}
+  .helper{
+    margin:14px 0 0;
+    text-align:center;
+    color:#9699aa;
+    font-size:12px;
+  }
+
+  /* HOME */
+  .home-screen{
+    padding-bottom:calc(86px + env(safe-area-inset-bottom));
+  }
+  .topbar{
+    height:72px;
+    padding:16px 18px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .top-actions{display:flex;align-items:center;gap:8px}
+  .icon-btn{
+    width:40px;height:40px;border-radius:14px;border:1px solid var(--line);
+    background:#ffffffcc;display:grid;place-items:center;color:#4b506b;cursor:pointer;
+  }
+  .avatar{
+    width:40px;height:40px;border-radius:14px;background:var(--primary-soft);
+    display:grid;place-items:center;font-size:14px;font-weight:800;color:var(--primary);
+  }
+
+  .content{padding:8px 18px 26px}
+  .greeting{
+    background:linear-gradient(135deg,#ffffff 0%,#f4f1ff 56%,#edf6ff 100%);
+    border:1px solid rgba(120,104,243,.08);
+    border-radius:26px;
+    padding:22px;
+    box-shadow:0 12px 30px rgba(84,76,154,.08);
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .greeting h2{margin:0;font-size:22px;letter-spacing:-.04em}
+  .greeting p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+  .mini-illustration{
+    width:86px;min-width:86px;height:72px;border-radius:20px;background:#edeaff;position:relative;
+  }
+  .mini-illustration:before{content:"";position:absolute;left:23px;top:16px;width:42px;height:28px;border-radius:7px;background:white;border:1px solid #d9d6f5}
+  .mini-illustration:after{content:"☕";position:absolute;left:8px;bottom:4px;font-size:24px}
+
+  .section-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin:26px 4px 12px;
+  }
+  .section-head h3{margin:0;font-size:20px;letter-spacing:-.03em}
+  .progress-label{font-weight:800;color:var(--primary);font-size:14px}
+  .progress-track{
+    width:100%;height:8px;border-radius:999px;background:#e7e6f3;overflow:hidden;margin:0 0 16px;
+  }
+  .progress-fill{
+    height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--primary-2));border-radius:inherit;
+    transition:width .35s ease;
+  }
+
+  .task-list{display:flex;flex-direction:column;gap:12px}
+  .task-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    box-shadow:0 8px 18px rgba(77,74,124,.05);
+    cursor:pointer;
+  }
+  .task-card:active{transform:scale(.995)}
+  .task-icon{
+    width:48px;height:48px;border-radius:16px;background:var(--primary-soft);
+    display:grid;place-items:center;font-size:23px;flex:0 0 auto;
+  }
+  .task-meta{min-width:0;flex:1}
+  .task-title{font-weight:800;font-size:15px}
+  .task-desc{margin-top:4px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .task-state{
+    font-size:12px;font-weight:800;color:#9a9db0;
+  }
+
+  .placeholder{
+    margin-top:18px;
+    padding:17px;
+    border-radius:18px;
+    background:#ffffffa8;
+    border:1px dashed #d9d9e8;
+    color:#9295a8;
+    text-align:center;
+    font-size:12px;
+    line-height:1.6;
+  }
+
+  .bottom-nav{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    width:min(520px,100%);
+    height:calc(72px + env(safe-area-inset-bottom));
+    padding:8px 12px env(safe-area-inset-bottom);
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    z-index:20;
+  }
+  .nav-btn{
+    border:0;background:transparent;color:#9498aa;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;font-size:10px;font-weight:700;cursor:pointer;border-radius:14px;
+  }
+  .nav-btn .nav-icon{font-size:21px;line-height:1}
+  .nav-btn.active{color:var(--primary);background:var(--primary-soft)}
+
+  .toast{
+    position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);
+    background:#292d42;color:#fff;padding:11px 16px;border-radius:14px;
+    font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:30;
+    max-width:calc(100% - 40px);text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+
+  .work-panel-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 10px 24px rgba(77,74,124,.07)}
+  .work-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+  .work-head h3{margin:0;font-size:19px}.back-btn{border:0;background:var(--primary-soft);color:var(--primary);border-radius:12px;padding:9px 12px;font-weight:800}
+  .mail-item,.file-item,.doc-box{border:1px solid var(--line);background:#fbfbff;border-radius:16px;padding:14px;margin:10px 0}
+  .mail-item strong,.file-item strong{display:block;margin-bottom:5px}.small{font-size:12px;color:var(--muted);line-height:1.55}.body-copy{font-size:14px;line-height:1.7;margin:12px 0;color:#3d4158}
+  .choice-grid{display:grid;gap:9px;margin-top:12px}.choice{border:1px solid var(--line);background:white;border-radius:14px;padding:13px;text-align:left;font-weight:700;color:var(--text)}.choice.selected{border-color:#a99eff;background:var(--primary-soft);color:#5445c7}
+  .action-btn{width:100%;height:50px;border:0;border-radius:15px;background:linear-gradient(135deg,var(--primary),#8f7eff);color:white;font-weight:800;margin-top:12px}.action-btn.secondary{background:#f0eff9;color:#5f6275;box-shadow:none}.action-btn:disabled{opacity:.45}
+  .num-seq{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.num-chip{min-width:50px;padding:11px 10px;border-radius:13px;background:var(--primary-soft);text-align:center;font-weight:900;color:#5749c9}.answer-input{width:100%;height:50px;border:1px solid var(--line);border-radius:14px;padding:0 14px;outline:none;background:#fff}.answer-input:focus{border-color:#aaa0ff;box-shadow:0 0 0 4px rgba(120,104,243,.09)}
+  .folder-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.folder{padding:12px 5px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center;font-size:12px;font-weight:800}.file-item{cursor:pointer}.file-item.selected{border-color:#a99eff;background:var(--primary-soft)}
+  .hint-tag{display:inline-block;padding:5px 8px;border-radius:9px;background:#f1efff;color:#6657d7;font-size:11px;font-weight:800;margin-top:7px}.success-box{padding:16px;border-radius:16px;background:#edf9f5;color:#28765e;font-weight:800;text-align:center;margin-top:12px}
+
+  body.theme-evening{
+    --bg:#e5e6ec;
+    --surface:#f5f5f7;
+    --surface-soft:#ececf0;
+    --text:#252832;
+    --muted:#747985;
+    --line:#d5d7de;
+    --primary:#6f6b8e;
+    --primary-2:#8f8aa9;
+    --primary-soft:#e3e2ea;
+    --nav:#eeeeF2;
+    --shadow:0 16px 40px rgba(48,50,60,.12);
+  }
+  body.theme-evening .app{
+    background:
+      radial-gradient(circle at 15% 5%, rgba(91,88,120,.10), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(80,91,110,.08), transparent 24%),
+      var(--bg);
+    transition:background .55s ease,color .55s ease;
+  }
+  body.theme-evening .greeting{background:linear-gradient(135deg,#f7f7f8 0%,#eeeeF2 55%,#e9ebef 100%)}
+  body.theme-evening .bottom-nav{background:rgba(239,239,243,.96)}
+  .checkout-wrap{margin-top:18px}
+  .checkout-btn{
+    width:100%;height:56px;border:0;border-radius:18px;
+    background:linear-gradient(135deg,#6e61e9,#8c7cf8);
+    color:#fff;font-weight:900;font-size:16px;
+    box-shadow:0 12px 26px rgba(110,97,233,.24);cursor:pointer;
+  }
+  .overlay{
+    position:fixed;inset:0;background:rgba(30,32,45,.38);
+    display:none;align-items:center;justify-content:center;
+    padding:22px;z-index:100;backdrop-filter:blur(6px);
+  }
+  .overlay.show{display:flex}
+  .modal{
+    width:min(420px,100%);background:#fff;border-radius:26px;padding:24px;
+    box-shadow:0 28px 70px rgba(30,30,55,.24);border:1px solid rgba(120,104,243,.10);
+  }
+  .modal-icon{
+    width:58px;height:58px;border-radius:20px;background:var(--primary-soft);
+    display:grid;place-items:center;font-size:28px;margin-bottom:16px;
+  }
+  .modal h3{font-size:21px;margin:0 0 9px;letter-spacing:-.04em}
+  .modal p{font-size:14px;line-height:1.65;color:var(--muted);margin:0}
+  .modal-highlight{
+    margin-top:15px;padding:14px 15px;border-radius:16px;
+    background:#f3f1ff;color:#5d50c8;font-weight:900;
+  }
+  .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+  .modal-actions.one{grid-template-columns:1fr}
+  .modal-btn{
+    height:49px;border-radius:15px;border:1px solid var(--line);
+    background:#f5f5f8;color:#55596c;font-weight:850;cursor:pointer;
+  }
+  .modal-btn.primary{border:0;background:linear-gradient(135deg,var(--primary),#8f7eff);color:#fff}
+  .loading-row{display:flex;align-items:center;gap:11px;margin-top:16px;color:#666a7d;font-size:13px;font-weight:750}
+  .spinner{
+    width:20px;height:20px;border-radius:50%;border:3px solid #e0def6;
+    border-top-color:var(--primary);animation:spin .75s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .extra-task{border-color:#c7c4d2;background:linear-gradient(135deg,#f0f0f3,#e7e8ed)}
+  .extra-task .task-icon{background:#dedde6}
+
+
+  body.theme-night{
+    --bg:#252a35;
+    --surface:#323844;
+    --surface-soft:#2c323d;
+    --text:#f1f3f7;
+    --muted:#aeb5c1;
+    --line:#454c59;
+    --primary:#9b95c9;
+    --primary-2:#858eb7;
+    --primary-soft:#414556;
+    --nav:#2c313c;
+    --success:#76c6a9;
+    --shadow:0 16px 40px rgba(0,0,0,.20);
+  }
+  body.theme-night .app{
+    background:
+      radial-gradient(circle at 12% 4%, rgba(113,109,150,.13), transparent 30%),
+      radial-gradient(circle at 92% 9%, rgba(73,87,111,.13), transparent 25%),
+      var(--bg);
+  }
+  body.theme-night .greeting{background:linear-gradient(135deg,#373d49,#303641 58%,#2c3440)}
+  body.theme-night .bottom-nav{background:rgba(43,48,59,.96)}
+  body.theme-night .icon-btn, body.theme-night .task-card, body.theme-night .work-panel-card,
+  body.theme-night .mail-item, body.theme-night .file-item, body.theme-night .doc-box,
+  body.theme-night .choice, body.theme-night .answer-input{background:#323844;color:var(--text)}
+  body.theme-night .placeholder{background:#303641;border-color:#4a515e;color:#aeb5c1}
+  .employee-search{display:flex;gap:8px;margin-top:12px}
+  .employee-search input{flex:1;min-width:0}
+  .search-btn{border:0;border-radius:14px;padding:0 15px;background:var(--primary-soft);color:var(--primary);font-weight:850}
+  .empty-result{margin-top:12px;padding:15px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);font-size:13px;line-height:1.6}
+  .employee-card{margin-top:14px;padding:17px;border:1px solid var(--line);border-radius:18px;background:var(--surface-soft)}
+  .employee-name{font-size:17px;font-weight:900}.employee-info{margin-top:8px;font-size:13px;color:var(--muted);line-height:1.7}
+  .status-pill{display:inline-block;margin-left:5px;padding:4px 8px;border-radius:999px;background:#e8e7ef;color:#686579;font-size:11px;font-weight:900}
+  body.theme-night .status-pill{background:#464c59;color:#d7dbe3}
+
+
+  .report-note{padding:15px;border-radius:17px;background:var(--surface-soft);border:1px solid var(--line);font-size:13px;line-height:1.65;color:var(--muted)}
+  .timeline-list{display:grid;gap:10px;margin-top:14px}
+  .timeline-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-radius:15px;background:var(--surface-soft);border:1px solid var(--line)}
+  .timeline-row b{font-size:14px}.timeline-row span{font-size:12px;color:var(--muted);font-weight:800}
+  .order-board{margin-top:16px;padding:14px;border-radius:18px;background:var(--surface-soft);border:1px solid var(--line)}
+  .order-title{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:10px}
+  .order-slots{display:flex;gap:7px;flex-wrap:wrap;min-height:38px}
+  .order-chip{padding:9px 11px;border-radius:12px;background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:900}
+  .report-choices{display:grid;gap:9px;margin-top:14px}
+  .report-choice{border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:14px;text-align:left;color:var(--text);font-weight:850}
+  .report-choice.used{opacity:.38;pointer-events:none}
+  .status-checks{display:grid;gap:9px;margin-top:16px}
+  .status-line{padding:12px 14px;border-radius:14px;background:var(--surface-soft);border:1px solid var(--line);font-size:13px;font-weight:800}
+  .status-line.pending{color:var(--muted)}
+  .status-line.ok{color:var(--success)}
+  .system-joke{margin-top:14px;padding:14px 15px;border-radius:16px;background:#3b3f4d;color:#e7e9f0;font-size:13px;line-height:1.65;border:1px solid #505666}
+
+
+  .admin-gate{padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface-soft)}
+  .admin-code{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+  .admin-code input{height:52px;text-align:center;font-weight:900;font-size:20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);outline:none}
+  .admin-code input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(155,149,201,.12)}
+  .icon-seq{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+  .icon-token{width:54px;height:54px;border-radius:16px;background:var(--primary-soft);display:grid;place-items:center;font-size:25px;border:1px solid var(--line)}
+  .arrow-token{color:var(--muted);font-weight:900}
+  .admin-panel{margin-top:14px}
+  .admin-title{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-bottom:8px}
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .setting-row:last-child{border-bottom:0}
+  .setting-copy b{display:block;font-size:14px}.setting-copy span{display:block;margin-top:4px;font-size:12px;color:var(--muted);line-height:1.5}
+  .toggle{min-width:58px;height:32px;border-radius:999px;background:#7b78a8;position:relative;border:0;cursor:pointer}
+  .toggle:after{content:"";position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:white;transition:.2s}
+  .toggle.off{background:#59606d}
+  .toggle.off:after{right:30px}
+  .log-box{margin-top:16px;padding:14px;border-radius:16px;background:#292e38;border:1px solid #434a57;color:#dfe2e8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.7}
+  .log-line{display:flex;gap:10px}.log-time{color:#9199a8;min-width:42px}.log-em{color:#b8b2ef}
+  .meaning-box{margin-top:14px;padding:15px;border-radius:16px;background:var(--surface-soft);border:1px solid var(--line);font-size:13px;line-height:1.7;color:var(--muted)}
+  .meaning-box b{color:var(--text)}
+
+
+  .code-display{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0}
+  .code-slot{height:54px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:grid;place-items:center;font-size:22px;font-weight:900;color:var(--text)}
+  .code-slot.filled{border-color:var(--primary);background:var(--primary-soft);color:var(--primary)}
+  .num-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}
+  .num-key{height:48px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);font-size:17px;font-weight:900}
+  .num-key.utility{background:var(--surface-soft);color:var(--muted);font-size:14px}
+  .shuffle-note{display:flex;align-items:center;gap:7px;margin:11px 0 4px;color:var(--muted);font-size:12px;font-weight:800}
+  .file-card-action{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .file-card-action .small{margin-top:5px}
+  .file-chevron{font-size:18px;color:var(--muted)}
+  .folder-sheet{display:grid;gap:9px;margin-top:16px}
+  .folder-choice-btn{height:50px;border:1px solid var(--line);border-radius:15px;background:var(--surface);color:var(--text);font-weight:850}
+
+
+  .overlay{
+    padding:
+      max(14px, env(safe-area-inset-top))
+      14px
+      max(14px, env(safe-area-inset-bottom));
+    overflow-y:auto;
+    align-items:flex-end;
+  }
+  .modal{
+    max-height:calc(100dvh - 32px);
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:max(24px, env(safe-area-inset-bottom));
+  }
+  .modal-actions{
+    position:sticky;
+    bottom:0;
+    background:#fff;
+    padding-top:10px;
+    padding-bottom:2px;
+    z-index:2;
+  }
+  body.theme-night .modal-actions{
+    background:#fff;
+  }
+
+  .toggle.readonly{
+    opacity:.58;
+    cursor:default;
+  }
+  .setting-row.actionable{
+    border:1px solid rgba(155,149,201,.35);
+    border-radius:16px;
+    padding:14px;
+    margin:10px 0;
+    background:rgba(155,149,201,.07);
+  }
+  .setting-row.actionable .setting-copy b::after{
+    content:" · 변경 가능";
+    color:var(--primary);
+    font-size:11px;
+    font-weight:800;
+  }
+  .readonly-note{
+    margin-top:5px;
+    font-size:11px;
+    color:var(--muted);
+  }
+
+
+  .ending-screen{
+    min-height:100dvh;
+    padding:28px 22px max(30px, env(safe-area-inset-bottom));
+    justify-content:center;
+    background:
+      radial-gradient(circle at 15% 5%, rgba(138,123,255,.13), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(110,166,255,.11), transparent 24%),
+      #f4f5ff;
+  }
+  .ending-card{
+    background:#fff;border:1px solid rgba(124,109,245,.08);border-radius:30px;
+    box-shadow:0 18px 48px rgba(84,76,154,.13);padding:28px 24px;text-align:center;
+  }
+  .ending-icon{
+    width:74px;height:74px;margin:0 auto 18px;border-radius:24px;
+    display:grid;place-items:center;font-size:34px;
+    background:linear-gradient(135deg,#eeeaff,#eef7ff);
+  }
+  .ending-card h2{margin:0;font-size:25px;letter-spacing:-.04em}
+  .ending-card p{margin:10px 0 0;color:#7d8197;line-height:1.7;font-size:14px}
+  .tomorrow-toast{
+    margin-top:20px;padding:14px 15px;border-radius:16px;
+    background:#f1efff;color:#5d50c8;font-size:13px;font-weight:850;
+    opacity:0;transform:translateY(8px);transition:.4s;
+  }
+  .tomorrow-toast.show{opacity:1;transform:translateY(0)}
+  .restart-btn{
+    width:100%;height:52px;border:0;border-radius:16px;margin-top:18px;
+    background:linear-gradient(135deg,#7868f3,#8f7eff);
+    color:#fff;font-weight:900;
+  }
+
+
+  .task-card[disabled], .action-btn[disabled], .checkout-btn[disabled]{
+    opacity:.58;cursor:default;transform:none!important;
+  }
+  .completed-lock{
+    margin-top:12px;padding:12px 14px;border-radius:14px;
+    background:rgba(83,182,147,.10);color:var(--success);
+    font-size:12px;font-weight:850;text-align:center;
+  }
+
+  @media (min-width:760px){
+    .overlay{align-items:center}
+    .modal{max-height:calc(100dvh - 64px)}
+  }
+
+  @media (min-width:760px){
+    body{padding:28px;background:#ececf5}
+    .app{min-height:calc(100dvh - 56px);border-radius:30px;box-shadow:0 22px 60px rgba(46,45,77,.12)}
+    .login-screen{padding:28px}
+    .login-shell{display:grid;grid-template-columns:1.05fr .95fr}
+    .login-visual{min-height:560px}
+    .login-form{display:flex;flex-direction:column;justify-content:center;padding:46px}
+    .bottom-nav{width:520px;bottom:28px;border-radius:0 0 30px 30px}
+  }
+
+  /* v0.9 responsive desktop layout */
+  @media (min-width:900px){
+    body{
+      padding:0;
+      background:#ececf5;
+    }
+    .app{
+      max-width:none;
+      width:100%;
+      min-height:100dvh;
+      border-radius:0;
+      box-shadow:none;
+    }
+
+    .login-screen{
+      min-height:100dvh;
+      padding:40px;
+      align-items:center;
+    }
+    .login-shell{
+      width:min(1120px,100%);
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      border-radius:34px;
+    }
+    .login-visual{
+      min-height:680px;
+      padding:48px 52px;
+    }
+    .desk-art{
+      transform:scale(1.25);
+      transform-origin:center;
+    }
+    .login-copy h1{font-size:42px}
+    .login-copy p{font-size:16px}
+    .login-form{
+      padding:64px 58px;
+      justify-content:center;
+    }
+    .login-form h2{font-size:30px}
+    .name-input,.primary-btn{height:58px}
+
+    .home-screen{
+      display:grid;
+      grid-template-columns:230px minmax(0,1fr);
+      padding-bottom:0;
+      min-height:100dvh;
+    }
+    .home-screen.active{display:grid}
+
+    .topbar{
+      grid-column:2;
+      height:84px;
+      padding:20px 32px;
+      border-bottom:1px solid var(--line);
+      background:color-mix(in srgb, var(--surface) 88%, transparent);
+      backdrop-filter:blur(18px);
+      position:sticky;
+      top:0;
+      z-index:30;
+    }
+    .topbar .brand{display:none}
+
+    .content{
+      grid-column:2;
+      padding:28px 34px 42px;
+      width:min(1180px,100%);
+      margin:0 auto;
+    }
+    .greeting{
+      min-height:150px;
+      padding:30px 32px;
+      align-items:center;
+    }
+    .greeting h2{font-size:28px}
+    .greeting p{font-size:14px}
+    .mini-illustration{
+      width:130px;
+      min-width:130px;
+      height:96px;
+    }
+
+    .section-head{margin-top:30px}
+    .section-head h3{font-size:24px}
+    .task-list{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+    }
+    .task-card{
+      min-height:130px;
+      align-items:flex-start;
+      padding:20px;
+      position:relative;
+    }
+    .task-card .task-state{
+      position:absolute;
+      right:18px;
+      top:18px;
+    }
+    .task-card .task-desc{
+      white-space:normal;
+      line-height:1.55;
+      margin-top:8px;
+    }
+
+    #workPanel{
+      margin-top:22px!important;
+    }
+    .work-panel-card{
+      padding:26px;
+    }
+    .work-head h3{font-size:23px}
+    .choice-grid{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    .folder-sheet{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    .timeline-list{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .report-choices{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .num-keypad{
+      max-width:420px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .code-display{
+      max-width:420px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    .checkout-wrap{
+      display:flex;
+      justify-content:flex-end;
+    }
+    .checkout-btn{
+      width:320px;
+    }
+
+    .bottom-nav{
+      position:fixed;
+      left:0;
+      top:0;
+      bottom:0;
+      transform:none;
+      width:230px;
+      height:100dvh;
+      padding:28px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background:var(--nav);
+      border-top:0;
+      border-right:1px solid var(--line);
+      backdrop-filter:blur(18px);
+      z-index:40;
+    }
+    .bottom-nav::before{
+      content:"WORKPLACE";
+      display:block;
+      font-weight:900;
+      letter-spacing:.02em;
+      color:var(--text);
+      font-size:18px;
+      margin:2px 10px 24px;
+    }
+    .nav-btn{
+      min-height:54px;
+      flex-direction:row;
+      justify-content:flex-start;
+      gap:14px;
+      padding:0 16px;
+      font-size:14px;
+      border-radius:16px;
+      text-align:left;
+    }
+    .nav-btn .nav-icon{
+      width:24px;
+      font-size:21px;
+    }
+
+    .toast{
+      left:calc(50% + 115px);
+      bottom:26px;
+    }
+
+    .overlay{
+      padding:28px;
+      align-items:center;
+    }
+    .modal{
+      width:min(520px,100%);
+      max-height:calc(100dvh - 56px);
+      border-radius:28px;
+      padding:28px;
+    }
+
+    .ending-screen{
+      padding:42px;
+      align-items:center;
+    }
+    .ending-card{
+      width:min(560px,100%);
+      padding:42px 36px;
+    }
+  }
+
+  @media (min-width:1180px){
+    .task-list{
+      grid-template-columns:repeat(3,1fr);
+    }
+    .content{
+      padding-left:48px;
+      padding-right:48px;
+    }
+    .work-panel-card{
+      padding:30px;
+    }
+  }
+
+  @media (min-width:900px) and (max-width:1120px){
+    .task-list{
+      grid-template-columns:1fr;
+    }
+    .timeline-list,.report-choices{
+      grid-template-columns:1fr;
+    }
+  }
+
+
+  /* v1.0 final polish */
+  button{
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  button:focus-visible,input:focus-visible{
+    outline:3px solid color-mix(in srgb, var(--primary) 42%, transparent);
+    outline-offset:2px;
+  }
+  .task-card,.choice,.report-choice,.folder-choice-btn,.nav-btn,.modal-btn,.action-btn,.checkout-btn{
+    transition:transform .14s ease, opacity .14s ease, background-color .2s ease, border-color .2s ease;
+  }
+  @media (hover:hover){
+    .task-card:hover,.choice:hover,.report-choice:hover,.folder-choice-btn:hover{
+      transform:translateY(-1px);
+    }
+  }
+  .app,.greeting,.task-card,.work-panel-card,.bottom-nav{
+    transition:background .45s ease,color .35s ease,border-color .35s ease;
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      scroll-behavior:auto!important;
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+      transition-duration:.01ms!important;
+    }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <section id="loginScreen" class="screen login-screen active">
+    <div class="login-shell">
+      <div class="login-visual">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span>WORKPLACE</span>
+        </div>
+        <div class="desk-art" aria-hidden="true">
+          <div class="monitor"></div>
+          <div class="screen-lines"><i></i><i></i><i></i></div>
+          <div class="desk"></div>
+          <div class="cup"></div>
+          <div class="plant"></div>
+        </div>
+        <div class="login-copy">
+          <h1>오늘의 업무를<br>시작해볼까요?</h1>
+          <p>간단한 업무를 처리하고<br>오늘도 무사히 퇴근해보세요.</p>
+        </div>
+      </div>
+
+      <div class="login-form">
+        <div class="eyebrow">Internal Work System</div>
+        <h2>사내 업무 시스템</h2>
+        <p class="desc">이름만 입력하면 바로 시작할 수 있어요.</p>
+
+        <label class="field-label" for="nameInput">이름</label>
+        <input id="nameInput" class="name-input" maxlength="12" placeholder="이름을 입력해주세요" autocomplete="off" />
+        <button id="loginBtn" class="primary-btn">LOGIN</button>
+        <p class="helper">비밀번호는 필요하지 않습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="homeScreen" class="screen home-screen">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span>WORKPLACE</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="bellBtn" aria-label="알림">🔔</button>
+        <div class="avatar" id="avatar">🙂</div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="greeting">
+        <div>
+          <h2><span id="playerName">사용자</span>님, 안녕하세요!</h2>
+          <p>오늘의 업무를 모두 완료하고<br>깔끔하게 퇴근해보세요.</p>
+        </div>
+        <div class="mini-illustration"></div>
+      </section>
+
+      <div class="section-head">
+        <h3>오늘의 업무</h3>
+        <div class="progress-label"><span id="doneCount">0</span> / 3</div>
+      </div>
+      <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+
+      <div class="task-list">
+        <button class="task-card" data-task="mail">
+          <div class="task-icon">✉️</div>
+          <div class="task-meta">
+            <div class="task-title">메일 보내기</div>
+            <div class="task-desc">회의자료를 담당자에게 전달하세요.</div>
+          </div>
+          <div class="task-state">대기</div>
+        </button>
+
+        <button class="task-card" data-task="approval">
+          <div class="task-icon">✅</div>
+          <div class="task-meta">
+            <div class="task-title">전자결재 처리</div>
+            <div class="task-desc">반려된 문서를 확인해주세요.</div>
+          </div>
+          <div class="task-state">대기</div>
+        </button>
+
+        <button class="task-card" data-task="files">
+          <div class="task-icon">📁</div>
+          <div class="task-meta">
+            <div class="task-title">자료 확인</div>
+            <div class="task-desc">분류되지 않은 파일을 확인하세요.</div>
+          </div>
+          <div class="task-state">대기</div>
+        </button>
+      </div>
+
+      <div class="placeholder" id="guideBox">
+        업무 카드를 눌러 오늘의 업무를 처리하세요. 세 업무는 원하는 순서대로 진행할 수 있습니다.
+      </div>
+
+      <section id="workPanel" style="display:none;margin-top:18px"></section>
+      <div id="checkoutArea" class="checkout-wrap" style="display:none">
+        <button id="checkoutBtn" class="checkout-btn">🚪 퇴근하기</button>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-nav="home"><span class="nav-icon">⌂</span><span>HOME</span></button>
+      <button class="nav-btn" data-nav="mail"><span class="nav-icon">✉</span><span>메일</span></button>
+      <button class="nav-btn" data-nav="approval"><span class="nav-icon">✓</span><span>결재</span></button>
+      <button class="nav-btn" data-nav="files"><span class="nav-icon">▣</span><span>자료실</span></button>
+      <button class="nav-btn" data-nav="menu"><span class="nav-icon">☰</span><span>메뉴</span></button>
+    </nav>
+  </section>
+
+  <section id="endingScreen" class="screen ending-screen">
+    <div class="ending-card">
+      <div class="ending-icon">🌙</div>
+      <h2>퇴근 처리가 완료되었습니다.</h2>
+      <p>오늘도 수고하셨습니다.<br>조심히 들어가세요!</p>
+      <div id="tomorrowToast" class="tomorrow-toast">🔔 내일 예정 업무 7건이 등록되었습니다.</div>
+      <button id="restartBtn" class="restart-btn">처음 화면으로 돌아가기</button>
+    </div>
+  </section>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="modalOverlay" class="overlay" aria-hidden="true">
+  <div id="modalCard" class="modal"></div>
+</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'leaveWorkGame_v10';
+
+  const loginScreen = document.getElementById('loginScreen');
+  const homeScreen = document.getElementById('homeScreen');
+  const nameInput = document.getElementById('nameInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const playerName = document.getElementById('playerName');
+  const avatar = document.getElementById('avatar');
+  const toast = document.getElementById('toast');
+  const endingScreen = document.getElementById('endingScreen');
+
+  let toastTimer = null;
+
+  const showToast = (msg) => {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  };
+
+
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalCard = document.getElementById('modalCard');
+
+  const applyTheme = (theme) => {
+    document.body.classList.toggle('theme-evening', theme === 'evening');
+    document.body.classList.toggle('theme-night', theme === 'night');
+  };
+
+  const closeModal = () => {
+    modalOverlay.classList.remove('show');
+    modalOverlay.setAttribute('aria-hidden','true');
+  };
+
+  const openModal = (html) => {
+    modalCard.innerHTML = html;
+    modalOverlay.classList.add('show');
+    modalOverlay.setAttribute('aria-hidden','false');
+  };
+
+  const showCompletionModal = () => {
+    const st = loadState();
+    if(!st || st.completionAcknowledged) return;
+    openModal(`
+      <div class="modal-icon">⭐</div>
+      <h3>오늘의 업무를 모두 완료했습니다!</h3>
+      <p>수고하셨습니다.<br>모든 업무가 정상적으로 처리되었습니다.</p>
+      <div class="modal-actions one">
+        <button id="completionOk" class="modal-btn primary">확인</button>
+      </div>`);
+    document.getElementById('completionOk').onclick = () => {
+      const state = loadState();
+      state.completionAcknowledged = true;
+      saveState(state);
+      closeModal();
+      renderHome(state);
+      showToast('퇴근할 준비가 되었습니다.');
+    };
+  };
+
+  const showCheckoutConfirm = () => {
+    openModal(`
+      <div class="modal-icon">🚪</div>
+      <h3>퇴근하시겠습니까?</h3>
+      <p>오늘 처리한 업무를 저장하고 퇴근을 진행합니다.</p>
+      <div class="modal-actions">
+        <button id="checkoutNo" class="modal-btn">아니오</button>
+        <button id="checkoutYes" class="modal-btn primary">예</button>
+      </div>`);
+    document.getElementById('checkoutNo').onclick = closeModal;
+    document.getElementById('checkoutYes').onclick = () => {
+      modalCard.innerHTML = `
+        <div class="modal-icon">⏳</div>
+        <h3>퇴근 처리 중...</h3>
+        <p>업무 기록과 퇴근 조건을 확인하고 있습니다.</p>
+        <div class="loading-row"><span class="spinner"></span> 퇴근 가능 여부 확인 중</div>`;
+      setTimeout(showFirstCheckoutFailure, 900);
+    };
+  };
+
+  const showFirstCheckoutFailure = () => {
+    const state = loadState();
+    state.firstCheckoutFailed = true;
+    state.extraTaskUnlocked = true;
+    state.theme = 'evening';
+    saveState(state);
+    renderHome(state);
+
+    modalCard.innerHTML = `
+      <div class="modal-icon">⚠️</div>
+      <h3>퇴근할 수 없습니다.</h3>
+      <p>미처리된 업무가 있습니다.</p>
+      <div class="modal-highlight">남은 업무 <b>1건</b></div>
+      <p style="margin-top:14px">보다 원활한 퇴근을 위해<br>추가 업무가 배정되었습니다. 🙂</p>
+      <div class="modal-actions one">
+        <button id="checkExtraTask" class="modal-btn primary">업무 확인하기</button>
+      </div>`;
+    document.getElementById('checkExtraTask').onclick = () => {
+      closeModal();
+      renderHome(loadState());
+      setTimeout(()=>document.getElementById('extraTaskCard')?.scrollIntoView({behavior:'smooth',block:'center'}),80);
+    };
+  };
+
+
+  const shuffled = (arr) => {
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  };
+
+  const makeRandomState = (player) => {
+    const twoDigit = () => String(Math.floor(Math.random() * 90) + 10);
+    const approvalPatterns = ['add','subtract','double','triple','stepUp'];
+    const pattern = approvalPatterns[Math.floor(Math.random() * approvalPatterns.length)];
+    return {
+      version:'1.0',
+      player,
+      stage:'home',
+      currentView:'home',
+      theme:'day',
+      completed:{mail:false,approval:false,files:false},
+      completionAcknowledged:false,
+      firstCheckoutFailed:false,
+      extraTaskUnlocked:false,
+      handoverCompleted:false,
+      secondTaskUnlocked:false,
+      reportCompleted:false,
+      secondCheckoutFailed:false,
+      thirdTaskUnlocked:false,
+      systemResolved:false,
+      finalCheckoutReady:false,
+      finalCheckoutComplete:false,
+      reportOrder:[],
+      random:{
+        mailHint: twoDigit(),
+        approvalHint: twoDigit(),
+        fileHint: twoDigit(),
+        approvalPattern: pattern,
+        adminDigits: [1,2,3,4].map(() => Math.floor(Math.random()*9)+1),
+        fileOrder: shuffled(['회의록_0810.pdf','결재양식_v2.docx','인수인계_김퇴근.txt']),
+        folderOrder: shuffled(['회의자료','결재자료','인수인계'])
+      },
+      createdAt: Date.now()
+    };
+  };
+
+  const loadState = () => {
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      return null;
+    }
+  };
+
+  const saveState = (state) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  };
+
+  const normalizeState = (state) => {
+    if(!state || !state.player) return null;
+    state.version='1.0';
+    state.completed=Object.assign({mail:false,approval:false,files:false},state.completed||{});
+    state.random=state.random||{};
+    state.reportOrder=Array.isArray(state.reportOrder)?state.reportOrder:[];
+    state.currentView=state.currentView||'home';
+    if(state.finalCheckoutComplete) state.currentView='ending';
+    if(state.systemResolved) state.thirdTaskUnlocked=true;
+    if(state.reportCompleted) state.secondTaskUnlocked=true;
+    if(state.handoverCompleted) state.extraTaskUnlocked=true;
+    return state;
+  };
+
+  const setCurrentView = (view) => {
+    const st=loadState();
+    if(!st) return;
+    st.currentView=view;
+    saveState(st);
+  };
+
+  const renderHome = (state) => {
+    playerName.textContent = state.player;
+    avatar.textContent = state.player.trim().charAt(0) || '🙂';
+
+    applyTheme(state.theme || 'day');
+
+    const basicDone = Object.values(state.completed || {}).filter(Boolean).length;
+    const doneTotal = basicDone + (state.handoverCompleted ? 1 : 0) + (state.reportCompleted ? 1 : 0) + (state.systemResolved ? 1 : 0);
+    const total = state.thirdTaskUnlocked ? 6 : (state.secondTaskUnlocked ? 5 : (state.extraTaskUnlocked ? 4 : 3));
+    document.getElementById('doneCount').textContent = doneTotal;
+    const label = document.querySelector('.progress-label');
+    label.innerHTML = `<span id="doneCount">${doneTotal}</span> / ${total}`;
+    document.getElementById('progressFill').style.width = `${(doneTotal/total)*100}%`;
+
+    document.querySelectorAll('.task-card[data-task]').forEach(card => {
+      const key = card.dataset.task;
+      const completed = !!state.completed?.[key];
+      const stateEl = card.querySelector('.task-state');
+      stateEl.textContent = completed ? '완료' : '대기';
+      stateEl.style.color = completed ? 'var(--success)' : '#9a9db0';
+    });
+
+    const list = document.querySelector('.task-list');
+    let extra = document.getElementById('extraTaskCard');
+    if(state.extraTaskUnlocked && !extra){
+      extra = document.createElement('button');
+      extra.id = 'extraTaskCard';
+      extra.className = 'task-card extra-task';
+      extra.innerHTML = `
+        <div class="task-icon">👤</div>
+        <div class="task-meta">
+          <div class="task-title">업무 인수인계</div>
+          <div class="task-desc">퇴근 전 담당자에게 업무를 인계하세요.</div>
+        </div>
+        <div class="task-state">추가</div>`;
+      extra.addEventListener('click',()=>openHandover());
+      list.appendChild(extra);
+    }
+    if(extra && state.handoverCompleted){
+      extra.querySelector('.task-state').textContent = '완료';
+      extra.querySelector('.task-state').style.color = 'var(--success)';
+    }
+    if(!state.extraTaskUnlocked && extra) extra.remove();
+
+    let second = document.getElementById('secondTaskCard');
+    if(state.secondTaskUnlocked && !second){
+      second = document.createElement('button');
+      second.id = 'secondTaskCard';
+      second.className = 'task-card';
+      second.innerHTML = `
+        <div class="task-icon">📝</div>
+        <div class="task-meta">
+          <div class="task-title">퇴근 보고서 작성</div>
+          <div class="task-desc">금일 업무 처리 내역을 보고하세요.</div>
+        </div>
+        <div class="task-state">추가</div>`;
+      second.addEventListener('click',()=>openReport());
+      list.appendChild(second);
+    }
+    if(second && state.reportCompleted){
+      second.querySelector('.task-state').textContent = '완료';
+      second.querySelector('.task-state').style.color = 'var(--success)';
+    }
+
+    let third = document.getElementById('thirdTaskCard');
+    if(state.thirdTaskUnlocked && !third){
+      third = document.createElement('button');
+      third.id = 'thirdTaskCard';
+      third.className = 'task-card';
+      third.innerHTML = `
+        <div class="task-icon">⚙️</div>
+        <div class="task-meta">
+          <div class="task-title">시스템 업무 확인</div>
+          <div class="task-desc">반복적인 업무 생성 원인을 확인하세요.</div>
+        </div>
+        <div class="task-state">추가</div>`;
+      third.addEventListener('click',()=>openSystemTask());
+      list.appendChild(third);
+    }
+    if(third && state.systemResolved){
+      third.querySelector('.task-state').textContent = '완료';
+      third.querySelector('.task-state').style.color = 'var(--success)';
+    }
+
+    const allBasicDone = basicDone === 3;
+    const checkoutArea = document.getElementById('checkoutArea');
+    const canFirstCheckout = allBasicDone && state.completionAcknowledged && !state.firstCheckoutFailed;
+    const canSecondCheckout = state.reportCompleted && !state.secondCheckoutFailed;
+    const canFinalCheckout = state.systemResolved && !state.finalCheckoutComplete;
+    checkoutArea.style.display = (canFirstCheckout || canSecondCheckout || canFinalCheckout) ? 'block' : 'none';
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if(checkoutBtn) checkoutBtn.textContent = canFinalCheckout ? '🚪 퇴근하기' : '🚪 퇴근하기';
+  };
+
+  const enterHome = (state) => {
+    loginScreen.classList.remove('active');
+    homeScreen.classList.add('active');
+    renderHome(state);
+  };
+
+  const startGame = () => {
+    const name = nameInput.value.trim();
+    if(!name){
+      showToast('이름을 입력해주세요.');
+      nameInput.focus();
+      return;
+    }
+    localStorage.removeItem(STORAGE_KEY);
+    selectedRecipient=null;
+    selectedFile=null;
+    const state = makeRandomState(name);
+    saveState(state);
+    enterHome(state);
+    showToast(`${name}님, 환영합니다!`);
+  };
+
+  loginBtn.addEventListener('click', startGame);
+  nameInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') startGame();
+  });
+
+  const panel = document.getElementById('workPanel');
+  const guideBox = document.getElementById('guideBox');
+  let selectedRecipient = null;
+  let selectedFile = null;
+
+  const getState = () => loadState();
+  const updateCompleted = (key) => {
+    const state = getState();
+    if(!state || state.completed?.[key]) return false;
+    const wasDone = !!state.completed[key];
+    state.completed[key] = true;
+    saveState(state);
+    renderHome(state);
+    const basicDone = Object.values(state.completed || {}).filter(Boolean).length;
+    if(!wasDone && basicDone === 3 && !state.completionAcknowledged){
+      setTimeout(showCompletionModal, 220);
+    }
+    return true;
+  };
+
+
+  const openHandover = () => {
+    const state = getState();
+    if(!state) return;
+    setCurrentView('handover');
+    guideBox.style.display='none';
+    panel.style.display='block';
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+
+    const correctId = `${state.random.mailHint}${state.random.approvalHint}${state.random.fileHint}`;
+
+    panel.innerHTML = `<div class="work-panel-card">
+      <div class="work-head"><h3>👤 업무 인수인계</h3><button class="back-btn" id="backWork">HOME</button></div>
+      <div class="doc-box">
+        <b>퇴근 전 인수인계가 필요합니다.</b>
+        <div class="body-copy">금일 업무를 담당 직원에게 인계해주세요.<br><br>담당자: <b>김퇴근 사원</b></div>
+      </div>
+
+      <div class="small" style="font-weight:800">직원 검색</div>
+      <div class="employee-search">
+        <input id="employeeName" class="answer-input" placeholder="이름을 입력하세요">
+        <button id="employeeSearchBtn" class="search-btn">검색</button>
+      </div>
+      <div id="employeeResult"></div>
+
+      <div id="employeeIdArea" style="display:none;margin-top:18px">
+        <div class="small" style="font-weight:800">사번 직접 입력</div>
+        <input id="employeeId" class="answer-input" inputmode="numeric" maxlength="6" placeholder="6자리 사번">
+        <button id="verifyEmployee" class="action-btn">직원 확인</button>
+      </div>
+      ${state.handoverCompleted ? '<div class="success-box">✓ 업무 인계가 완료되었습니다.</div>' : ''}
+    </div>`;
+
+    document.getElementById('backWork').onclick=closePanel;
+    const result = document.getElementById('employeeResult');
+    const idArea = document.getElementById('employeeIdArea');
+
+    document.getElementById('employeeSearchBtn').onclick=()=>{
+      const q=document.getElementById('employeeName').value.trim();
+      if(!q) return showToast('직원 이름을 입력해주세요.');
+      if(q.includes('김퇴근')){
+        result.innerHTML=`<div class="empty-result">검색 결과가 없습니다.<br>사번을 알고 있다면 직접 입력해주세요.<br><br><b>힌트</b> · 담당자 정보는 금일 처리한 업무 내역에서 확인할 수 있습니다.</div>`;
+        idArea.style.display='block';
+      }else{
+        result.innerHTML=`<div class="empty-result">일치하는 직원을 찾을 수 없습니다.</div>`;
+        idArea.style.display='none';
+      }
+    };
+
+    document.getElementById('verifyEmployee').onclick=()=>{
+      const value=document.getElementById('employeeId').value.trim();
+      if(value.length!==6) return showToast('6자리 사번을 입력해주세요.');
+      if(value!==correctId) return showToast('사번이 일치하지 않습니다. 금일 업무를 다시 확인해주세요.');
+
+      result.innerHTML=`<div class="employee-card">
+        <div class="employee-name">김퇴근 사원 <span class="status-pill">퇴근 완료</span></div>
+        <div class="employee-info">사번 · ${correctId}<br>소속 · 업무지원팀<br>현재 상태 · 퇴근 완료</div>
+        <button id="handoverBtn" class="action-btn">업무 인계하기</button>
+      </div>`;
+      idArea.style.display='none';
+
+      document.getElementById('handoverBtn').onclick=()=>{
+        const st=getState();
+        if(st.handoverCompleted) return showToast('이미 인계가 완료되었습니다.');
+        st.handoverCompleted=true;
+        st.secondTaskUnlocked=true;
+        st.theme='night';
+        saveState(st);
+        renderHome(st);
+
+        openModal(`
+          <div class="modal-icon">✓</div>
+          <h3>업무 인계가 완료되었습니다!</h3>
+          <p>담당자에게 업무가 정상적으로 인계되었습니다.</p>
+          <div class="modal-highlight">퇴근까지 얼마 남지 않았어요!</div>
+          <div class="modal-actions one">
+            <button id="handoverOk" class="modal-btn primary">확인</button>
+          </div>`);
+        document.getElementById('handoverOk').onclick=()=>{
+          closeModal();
+          closePanel();
+          renderHome(getState());
+          setTimeout(()=>document.getElementById('secondTaskCard')?.scrollIntoView({behavior:'smooth',block:'center'}),100);
+        };
+      };
+    };
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  };
+
+
+  const REPORT_TIMES = {
+    mail:'17:42',
+    approval:'18:03',
+    files:'18:17',
+    handover:'18:31'
+  };
+  const REPORT_LABELS = {
+    mail:'메일 보내기',
+    approval:'전자결재',
+    files:'자료 확인',
+    handover:'업무 인수인계'
+  };
+  const REPORT_CORRECT = ['mail','approval','files','handover'];
+
+  const openReport = () => {
+    const state = getState();
+    if(!state) return;
+    setCurrentView('report');
+    if(!state.handoverCompleted) return showToast('업무 인수인계를 먼저 완료해주세요.');
+
+    guideBox.style.display='none';
+    panel.style.display='block';
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+
+    const current = Array.isArray(state.reportOrder) ? state.reportOrder : [];
+    const choices = [...REPORT_CORRECT].sort((a,b)=>REPORT_LABELS[b].localeCompare(REPORT_LABELS[a], 'ko'));
+
+    panel.innerHTML = `<div class="work-panel-card">
+      <div class="work-head"><h3>📝 퇴근 보고서 작성</h3><button class="back-btn" id="backWork">HOME</button></div>
+      <div class="report-note">금일 업무 처리 내역을 <b>시간 순서대로</b> 선택해주세요.<br>업무 기록의 처리 시간을 확인한 뒤 순서를 맞추면 됩니다.</div>
+
+      <div class="timeline-list">
+        ${REPORT_CORRECT.map(k=>`<div class="timeline-row"><b>${REPORT_LABELS[k]}</b><span>${REPORT_TIMES[k]}</span></div>`).join('')}
+      </div>
+
+      <div class="order-board">
+        <div class="order-title">선택한 순서</div>
+        <div class="order-slots" id="orderSlots">
+          ${current.length ? current.map((k,i)=>`<span class="order-chip">${i+1}. ${REPORT_LABELS[k]}</span>`).join('') : '<span class="small">아직 선택된 업무가 없습니다.</span>'}
+        </div>
+      </div>
+
+      <div class="report-choices">
+        ${choices.map(k=>`<button class="report-choice ${current.includes(k)?'used':''}" data-report="${k}">${REPORT_LABELS[k]}</button>`).join('')}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px">
+        <button id="resetReport" class="action-btn secondary" style="margin-top:0">초기화</button>
+        <button id="submitReport" class="action-btn" style="margin-top:0">보고서 제출</button>
+      </div>
+      ${state.reportCompleted ? '<div class="success-box">✓ 퇴근 보고서가 제출되었습니다.</div>' : ''}
+    </div>`;
+
+    document.getElementById('backWork').onclick=closePanel;
+
+    panel.querySelectorAll('.report-choice').forEach(btn=>{
+      btn.onclick=()=>{
+        const st=getState();
+        st.reportOrder = Array.isArray(st.reportOrder) ? st.reportOrder : [];
+        const key=btn.dataset.report;
+        if(st.reportOrder.includes(key)) return;
+        st.reportOrder.push(key);
+        saveState(st);
+        openReport();
+      };
+    });
+
+    document.getElementById('resetReport').onclick=()=>{
+      const st=getState();
+      st.reportOrder=[];
+      saveState(st);
+      openReport();
+    };
+
+    document.getElementById('submitReport').onclick=()=>{
+      const st=getState();
+      const order=st.reportOrder||[];
+      if(order.length!==4) return showToast('업무 4개를 모두 순서대로 선택해주세요.');
+      const ok=REPORT_CORRECT.every((k,i)=>order[i]===k);
+      if(!ok) return showToast('처리 시간을 다시 확인해주세요.');
+      st.reportCompleted=true;
+      saveState(st);
+      renderHome(st);
+
+      openModal(`
+        <div class="modal-icon">✓</div>
+        <h3>퇴근 보고서 제출 완료</h3>
+        <p>금일 업무 처리 내역이 정상적으로 제출되었습니다.</p>
+        <div class="modal-highlight">5 / 5 COMPLETE</div>
+        <div class="modal-actions one">
+          <button id="reportOk" class="modal-btn primary">확인</button>
+        </div>`);
+      document.getElementById('reportOk').onclick=()=>{
+        closeModal();
+        closePanel();
+        renderHome(getState());
+        showToast('퇴근하기 버튼이 활성화되었습니다.');
+      };
+    };
+
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  };
+
+  const showSecondCheckoutConfirm = () => {
+    openModal(`
+      <div class="modal-icon">🚪</div>
+      <h3>퇴근하시겠습니까?</h3>
+      <p>오늘의 모든 업무가 완료되었습니다.<br>퇴근 절차를 진행합니다.</p>
+      <div class="modal-actions">
+        <button id="checkoutNo2" class="modal-btn">아니오</button>
+        <button id="checkoutYes2" class="modal-btn primary">예</button>
+      </div>`);
+    document.getElementById('checkoutNo2').onclick=closeModal;
+    document.getElementById('checkoutYes2').onclick=()=>{
+      modalCard.innerHTML = `
+        <div class="modal-icon">⏳</div>
+        <h3>퇴근 가능 여부 확인 중...</h3>
+        <p>업무 처리 상태를 최종 확인하고 있습니다.</p>
+        <div class="status-checks">
+          <div class="status-line ok">✓ 업무 처리 여부 확인</div>
+          <div class="status-line pending" id="checkHandover">○ 인수인계 확인</div>
+          <div class="status-line pending" id="checkReport">○ 퇴근 보고서 확인</div>
+        </div>`;
+      setTimeout(()=>document.getElementById('checkHandover').className='status-line ok',450);
+      setTimeout(()=>{
+        const el=document.getElementById('checkHandover'); if(el) el.textContent='✓ 인수인계 확인';
+      },450);
+      setTimeout(()=>{
+        const el=document.getElementById('checkReport');
+        if(el){el.className='status-line ok';el.textContent='✓ 퇴근 보고서 확인';}
+      },900);
+      setTimeout(showSecondCheckoutFailure,1450);
+    };
+  };
+
+  const showSecondCheckoutFailure = () => {
+    const st=getState();
+    st.secondCheckoutFailed=true;
+    st.thirdTaskUnlocked=true;
+    saveState(st);
+    renderHome(st);
+
+    modalCard.innerHTML = `
+      <div class="modal-icon">📝</div>
+      <h3>퇴근 보고서가 정상적으로 제출되었습니다.</h3>
+      <p>제출된 보고서가 확인되었습니다.</p>
+      <div class="loading-row"><span class="spinner"></span> 보고서 검토 업무를 생성합니다...</div>`;
+
+    setTimeout(()=>{
+      modalCard.innerHTML = `
+        <div class="modal-icon">🎉</div>
+        <h3>새로운 업무가 배정되었습니다!</h3>
+        <div class="modal-highlight">남은 업무 <b>1건</b></div>
+        <div class="system-joke">업무가 없는 시간을 최소화하여<br>더욱 효율적인 근무 환경을 제공합니다. 🙂</div>
+        <div class="modal-actions one">
+          <button id="secondFailureOk" class="modal-btn primary">업무 확인하기</button>
+        </div>`;
+      document.getElementById('secondFailureOk').onclick=()=>{
+        closeModal();
+        renderHome(getState());
+        setTimeout(()=>document.getElementById('thirdTaskCard')?.scrollIntoView({behavior:'smooth',block:'center'}),100);
+      };
+    },900);
+  };
+
+
+  const TASK_ICONS = {
+    mail:'✉️',
+    approval:'📋',
+    files:'📁',
+    handover:'👤'
+  };
+  const TASK_NAMES = {
+    mail:'메일',
+    approval:'결재',
+    files:'자료',
+    handover:'인수인계'
+  };
+
+  const ensureAdminPuzzle = (state) => {
+    if(state.random.adminPuzzle) return state.random.adminPuzzle;
+    const digits = [...state.random.adminDigits];
+    const keys = ['mail','approval','files','handover'];
+    const mapping = {};
+    keys.forEach((k,i)=>mapping[k]=digits[i]);
+
+    const listOrder = shuffled(keys);
+    let sequence = shuffled(keys);
+    // 아이콘 순서가 식별코드 목록 순서와 같으면 다시 섞어서 퍼즐성이 사라지지 않게 함.
+    let guard=0;
+    while(sequence.join('|')===listOrder.join('|') && guard<20){
+      sequence=shuffled(keys);
+      guard++;
+    }
+    // 그래도 같다면 강제로 한 칸 회전
+    if(sequence.join('|')===listOrder.join('|')){
+      sequence=[...listOrder.slice(1),listOrder[0]];
+    }
+
+    const answer = sequence.map(k=>mapping[k]).join('');
+    state.random.adminPuzzle = {mapping,listOrder,sequence,answer};
+    saveState(state);
+    return state.random.adminPuzzle;
+  };
+
+  const openSystemTask = () => {
+    const state=getState();
+    if(!state) return;
+    setCurrentView('system');
+    if(!state.thirdTaskUnlocked) return showToast('아직 접근할 수 없습니다.');
+    const puzzle=ensureAdminPuzzle(state);
+
+    guideBox.style.display='none';
+    panel.style.display='block';
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+    if(state.systemResolved){
+      renderAdminPanel(puzzle);
+      const t=panel.querySelector('#autoAssignToggle');
+      if(t){t.classList.add('off','readonly');t.onclick=null;t.setAttribute('aria-label','신규 업무 자동 배정 OFF');}
+      return;
+    }
+
+    // Show the random digits naturally as "업무 식별코드" so the last puzzle can reuse them.
+    panel.innerHTML = `<div class="work-panel-card">
+      <div class="work-head"><h3>⚙️ 시스템 업무 확인</h3><button class="back-btn" id="backWork">HOME</button></div>
+
+      <div class="admin-gate">
+        <b>🔒 관리자 인증이 필요합니다.</b>
+        <div class="body-copy">금일 업무 기록의 <b>업무 식별코드</b>를 확인한 뒤,<br>아래 아이콘 순서대로 숫자를 입력해주세요.</div>
+
+        <div class="shuffle-note">↻ 식별코드 목록과 아이콘 순서는 매 게임마다 달라집니다.</div>
+        <div class="timeline-list">
+          ${puzzle.listOrder.map(k=>`<div class="timeline-row"><b>${TASK_ICONS[k]} ${TASK_NAMES[k]}</b><span>식별코드 ${puzzle.mapping[k]}</span></div>`).join('')}
+        </div>
+
+        <div class="icon-seq">
+          ${puzzle.sequence.map((k,i)=>`${i?'<span class="arrow-token">→</span>':''}<span class="icon-token" title="${TASK_NAMES[k]}">${TASK_ICONS[k]}</span>`).join('')}
+        </div>
+
+        <div class="code-display" id="codeDisplay">
+          <div class="code-slot"></div><div class="code-slot"></div><div class="code-slot"></div><div class="code-slot"></div>
+        </div>
+
+        <div class="num-keypad" id="numKeypad">
+          ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="num-key" data-key="${n}">${n}</button>`).join('')}
+          <button class="num-key utility" data-key="clear">초기화</button>
+          <button class="num-key" data-key="0">0</button>
+          <button class="num-key utility" data-key="back">⌫</button>
+        </div>
+
+        <button id="verifyAdmin" class="action-btn">관리자 인증</button>
+      </div>
+      ${state.systemResolved?'<div class="success-box">✓ 시스템 설정 확인이 완료되었습니다.</div>':''}
+    </div>`;
+
+    document.getElementById('backWork').onclick=closePanel;
+    let adminEntry='';
+    const slots=[...panel.querySelectorAll('.code-slot')];
+    const renderCode=()=>{
+      slots.forEach((slot,i)=>{
+        slot.textContent=adminEntry[i]||'';
+        slot.classList.toggle('filled',!!adminEntry[i]);
+      });
+    };
+    panel.querySelectorAll('.num-key').forEach(btn=>{
+      btn.onclick=()=>{
+        const key=btn.dataset.key;
+        if(key==='clear') adminEntry='';
+        else if(key==='back') adminEntry=adminEntry.slice(0,-1);
+        else if(adminEntry.length<4) adminEntry+=key;
+        renderCode();
+      };
+    });
+
+    document.getElementById('verifyAdmin').onclick=()=>{
+      if(adminEntry.length!==4) return showToast('4자리 인증코드를 입력해주세요.');
+      if(adminEntry!==puzzle.answer){
+        adminEntry='';
+        renderCode();
+        return showToast('인증코드가 올바르지 않습니다. 아이콘 순서를 다시 확인해주세요.');
+      }
+      renderAdminPanel(puzzle);
+    };
+
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  };
+
+  const renderAdminPanel = (puzzle) => {
+    panel.innerHTML = `<div class="work-panel-card">
+      <div class="work-head"><h3>WORKPLACE ADMIN</h3><button class="back-btn" id="backWork">HOME</button></div>
+      <div class="admin-title">업무 자동화 설정</div>
+
+      <div class="admin-panel">
+        <div class="setting-row">
+          <div class="setting-copy">
+            <b>업무 공백 감지</b>
+            <span>처리할 업무가 없는 상태를 자동으로 감지합니다.</span>
+            <div class="readonly-note">시스템 기본 설정 · 변경할 수 없음</div>
+          </div>
+          <button class="toggle readonly" aria-label="업무 공백 감지 ON" tabindex="-1"></button>
+        </div>
+        <div class="setting-row actionable">
+          <div class="setting-copy">
+            <b>신규 업무 자동 배정</b>
+            <span>업무 공백 발생 시 새로운 업무를 자동으로 생성합니다.</span>
+          </div>
+          <button id="autoAssignToggle" class="toggle" aria-label="신규 업무 자동 배정 ON"></button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-copy">
+            <b>퇴근 요청 시 업무 상태 확인</b>
+            <span>퇴근 전 미처리 업무 여부를 자동 확인합니다.</span>
+            <div class="readonly-note">시스템 기본 설정 · 변경할 수 없음</div>
+          </div>
+          <button class="toggle readonly" aria-label="퇴근 요청 시 업무 상태 확인 ON" tabindex="-1"></button>
+        </div>
+      </div>
+
+      <div class="meaning-box">
+        <b>업무 공백이란?</b><br>
+        직원에게 처리할 업무가 존재하지 않는 상태입니다.<br>
+        업무 공백은 생산성 저하의 원인이 될 수 있습니다.
+      </div>
+
+      <div class="log-box">
+        <div class="log-line"><span class="log-time">18:31</span><span>업무 04 완료</span></div>
+        <div class="log-line"><span class="log-time">18:31</span><span class="log-em">업무 공백 감지</span></div>
+        <div class="log-line"><span class="log-time">18:31</span><span>신규 업무 생성</span></div>
+        <div class="log-line"><span class="log-time">18:44</span><span>업무 05 완료</span></div>
+        <div class="log-line"><span class="log-time">18:44</span><span class="log-em">업무 공백 감지</span></div>
+        <div class="log-line"><span class="log-time">18:44</span><span>신규 업무 생성</span></div>
+      </div>
+    </div>`;
+
+    document.getElementById('backWork').onclick=closePanel;
+    document.getElementById('autoAssignToggle').onclick=showDisableAutomationConfirm;
+  };
+
+  const showDisableAutomationConfirm = () => {
+    openModal(`
+      <div class="modal-icon">⚠️</div>
+      <h3>업무 자동 배정을 중지하시겠습니까?</h3>
+      <p>직원에게 업무가 없는 시간이 발생할 수 있습니다.<br>이는 회사의 생산성에 영향을 줄 수 있습니다.</p>
+      <div class="modal-actions one" style="gap:10px">
+        <button id="keepWorking" class="modal-btn">계속 일하기</button>
+        <button id="disableAutomation" class="modal-btn primary">중지하고 퇴근하기</button>
+      </div>`);
+    document.getElementById('keepWorking').onclick=closeModal;
+    document.getElementById('disableAutomation').onclick=()=>{
+      const st=getState();
+      st.systemResolved=true;
+      st.finalCheckoutReady=true;
+      saveState(st);
+      renderHome(st);
+      modalCard.innerHTML=`
+        <div class="modal-icon">✓</div>
+        <h3>업무 자동 배정이 중지되었습니다.</h3>
+        <p>추가 업무가 없습니다.</p>
+        <div class="modal-highlight">6 / 6 COMPLETE</div>
+        <div class="modal-actions one">
+          <button id="systemDoneOk" class="modal-btn primary">확인</button>
+        </div>`;
+      document.getElementById('systemDoneOk').onclick=()=>{
+        closeModal();
+        closePanel();
+        renderHome(getState());
+        showToast('모든 추가 업무가 완료되었습니다.');
+      };
+    };
+  };
+
+
+
+  const showResetGameConfirm = () => {
+    openModal(`
+      <div class="modal-icon">↻</div>
+      <h3>처음부터 다시 시작할까요?</h3>
+      <p>현재 진행상태와 이번 게임의 랜덤 퍼즐 값이 모두 초기화됩니다.</p>
+      <div class="modal-actions">
+        <button id="resetNo" class="modal-btn">취소</button>
+        <button id="resetYes" class="modal-btn primary">처음부터 다시하기</button>
+      </div>`);
+    document.getElementById('resetNo').onclick=closeModal;
+    document.getElementById('resetYes').onclick=()=>{
+      localStorage.removeItem(STORAGE_KEY);
+      closeModal();
+      panel.style.display='none';
+      guideBox.style.display='block';
+      endingScreen.classList.remove('active');
+      homeScreen.classList.remove('active');
+      loginScreen.classList.add('active');
+      document.body.classList.remove('theme-evening','theme-night');
+      nameInput.value='';
+      selectedRecipient=null;
+      selectedFile=null;
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+  };
+
+  const showFinalCheckoutConfirm = () => {
+    openModal(`
+      <div class="modal-icon">🚪</div>
+      <h3>퇴근하시겠습니까?</h3>
+      <p>남은 업무가 없습니다.<br>최종 퇴근 절차를 진행합니다.</p>
+      <div class="modal-actions">
+        <button id="finalNo" class="modal-btn">아니오</button>
+        <button id="finalYes" class="modal-btn primary">예</button>
+      </div>`);
+    document.getElementById('finalNo').onclick=closeModal;
+    document.getElementById('finalYes').onclick=()=>{
+      modalCard.innerHTML=`
+        <div class="modal-icon">⏳</div>
+        <h3>퇴근 처리 중...</h3>
+        <p>최종 업무 상태를 확인하고 있습니다.</p>
+        <div class="status-checks">
+          <div class="status-line ok">✓ 미처리 업무 0건</div>
+          <div class="status-line pending" id="finalSystemCheck">○ 자동 업무 배정 상태 확인</div>
+          <div class="status-line pending" id="finalLogoutCheck">○ 로그아웃 준비</div>
+        </div>`;
+      setTimeout(()=>{
+        const el=document.getElementById('finalSystemCheck');
+        if(el){el.className='status-line ok';el.textContent='✓ 자동 업무 배정 OFF';}
+      },450);
+      setTimeout(()=>{
+        const el=document.getElementById('finalLogoutCheck');
+        if(el){el.className='status-line ok';el.textContent='✓ 로그아웃 준비 완료';}
+      },900);
+      setTimeout(()=>{
+        modalCard.innerHTML=`
+          <div class="modal-icon">🌙</div>
+          <h3>퇴근 처리가 완료되었습니다.</h3>
+          <p>오늘도 수고하셨습니다.<br>조심히 들어가세요!</p>
+          <div class="modal-actions one">
+            <button id="finalCompleteOk" class="modal-btn primary">확인</button>
+          </div>`;
+        document.getElementById('finalCompleteOk').onclick=finishGame;
+      },1350);
+    };
+  };
+
+  const finishGame = () => {
+    const st=getState();
+    if(st){
+      st.finalCheckoutComplete=true;
+      st.currentView='ending';
+      saveState(st);
+    }
+    closeModal();
+    document.body.classList.remove('theme-evening','theme-night');
+    loginScreen.classList.remove('active');
+    homeScreen.classList.remove('active');
+    document.getElementById('endingScreen').classList.add('active');
+    setTimeout(()=>document.getElementById('tomorrowToast').classList.add('show'),900);
+  };
+
+  const approvalPuzzle = (state) => {
+    if(state.random.approvalPuzzle) return state.random.approvalPuzzle;
+    const type = state.random.approvalPattern;
+    let seq=[], ans=0, label='';
+    if(type==='add') { const a=3+Math.floor(Math.random()*12), d=2+Math.floor(Math.random()*6); seq=[a,a+d,a+2*d]; ans=a+3*d; label=`${d}씩 증가`; }
+    else if(type==='subtract') { const d=2+Math.floor(Math.random()*5), a=28+Math.floor(Math.random()*20); seq=[a,a-d,a-2*d]; ans=a-3*d; label=`${d}씩 감소`; }
+    else if(type==='double') { const a=2+Math.floor(Math.random()*4); seq=[a,a*2,a*4]; ans=a*8; label='2배'; }
+    else if(type==='triple') { const a=1+Math.floor(Math.random()*3); seq=[a,a*3,a*9]; ans=a*27; label='3배'; }
+    else { const a=2+Math.floor(Math.random()*6), d=1+Math.floor(Math.random()*3); seq=[a,a+d,a+d+(d+1)]; ans=a+d+(d+1)+(d+2); label='증가폭이 1씩 증가'; }
+    state.random.approvalPuzzle={seq,ans,label}; saveState(state); return state.random.approvalPuzzle;
+  };
+
+  const openPanel = (key) => {
+    const state=getState();
+    if(!state) return;
+    setCurrentView(key);
+    guideBox.style.display='none'; panel.style.display='block';
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+    const nav=document.querySelector(`.nav-btn[data-nav="${key}"]`); if(nav) nav.classList.add('active');
+    if(key==='mail') renderMail(state);
+    if(key==='approval') renderApproval(state);
+    if(key==='files') renderFiles(state);
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  };
+  const closePanel=()=>{panel.style.display='none';guideBox.style.display='block';setCurrentView('home');document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.querySelector('.nav-btn[data-nav="home"]').classList.add('active');window.scrollTo({top:0,behavior:'smooth'});};
+
+  const renderMail=(state)=>{
+    panel.innerHTML=`<div class="work-panel-card"><div class="work-head"><h3>✉️ 메일 보내기</h3><button class="back-btn" id="backWork">HOME</button></div>
+    <div class="mail-item"><strong>[업무요청] 회의자료 전달 부탁드립니다</strong><div class="small">보낸 사람 · 나야근 대리</div></div>
+    <div class="body-copy">오늘 회의에 사용할 자료입니다.<br>첨부파일을 확인한 뒤 참석자에게 전달해주세요.<br><br>담당자: <b>김퇴근 사원</b><br>회의실: <b>B-${state.random.mailHint}</b></div>
+    <div class="mail-item"><strong>📎 회의자료_최종.pdf</strong><div class="small">회의 안건 및 참고자료 · 1.8 MB</div></div>
+    <div class="small" style="margin-top:14px;font-weight:800">받는 사람</div>
+    <div class="choice-grid"><button class="choice recipient" data-r="김퇴근">김퇴근 사원 · 업무지원팀</button><button class="choice recipient" data-r="나야근">나야근 대리 · 기획팀</button><button class="choice recipient" data-r="최결재">최결재 과장 · 관리팀</button></div>
+    <button class="action-btn" id="sendMail" ${state.completed.mail?'disabled':''}>${state.completed.mail?'전송 완료':'메일 전달하기'}</button>${state.completed.mail?'<div class="completed-lock">완료된 업무입니다.</div>':''}</div>`;
+    document.getElementById('backWork').onclick=closePanel;
+    panel.querySelectorAll('.recipient').forEach(b=>b.onclick=()=>{selectedRecipient=b.dataset.r;panel.querySelectorAll('.recipient').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')});
+    document.getElementById('sendMail').onclick=()=>{const st=getState();if(st.completed.mail)return;if(!selectedRecipient)return showToast('받는 사람을 선택해주세요.');if(selectedRecipient!=='김퇴근')return showToast('회의 참석자를 다시 확인해주세요.');if(updateCompleted('mail'))showToast('메일을 정상적으로 전송했습니다.');renderMail(getState());};
+  };
+
+  const renderApproval=(state)=>{
+    const pz=approvalPuzzle(state);
+    panel.innerHTML=`<div class="work-panel-card"><div class="work-head"><h3>✅ 전자결재 처리</h3><button class="back-btn" id="backWork">HOME</button></div>
+    <div class="doc-box"><b>반려 문서 1건</b><div class="small" style="margin-top:6px">반려자 · 최결재 과장</div><div class="body-copy">문서번호 마지막 번호가 누락되었습니다.<br>기존 문서번호의 규칙을 확인하여 수정해주세요.</div><span class="hint-tag">사번 중간번호 ${state.random.approvalHint}</span></div>
+    <div class="num-seq">${pz.seq.map(n=>`<span class="num-chip">WK-${n}</span>`).join('')}<span class="num-chip">WK-??</span></div>
+    <input id="approvalAnswer" class="answer-input" inputmode="numeric" placeholder="누락된 번호 입력">
+    <button class="action-btn" id="submitApproval" ${state.completed.approval?'disabled':''}>${state.completed.approval?'상신 완료':'수정 후 재상신'}</button>${state.completed.approval?'<div class="completed-lock">완료된 업무입니다.</div>':''}</div>`;
+    document.getElementById('backWork').onclick=closePanel;
+    document.getElementById('submitApproval').onclick=()=>{const st=getState();if(st.completed.approval)return;const raw=document.getElementById('approvalAnswer').value.trim();if(raw==='')return showToast('번호를 입력해주세요.');const v=Number(raw);if(v!==pz.ans)return showToast('문서번호의 규칙을 다시 확인해주세요.');if(updateCompleted('approval'))showToast('결재가 정상적으로 상신되었습니다.');renderApproval(getState());};
+  };
+
+  const files=[['회의록_0810.pdf','회의자료'],['결재양식_v2.docx','결재자료'],['인수인계_김퇴근.txt','인수인계']];
+  const fileTargetMap=Object.fromEntries(files);
+
+  const showFolderPicker=(filename)=>{
+    const st=getState();
+    const order=st.random.folderOrder || ['회의자료','결재자료','인수인계'];
+    openModal(`
+      <div class="modal-icon">📁</div>
+      <h3>이 파일을 어디로 옮길까요?</h3>
+      <p><b>${filename}</b></p>
+      <div class="folder-sheet">
+        ${order.map(folder=>`<button class="folder-choice-btn" data-folder-choice="${folder}">📂 ${folder}</button>`).join('')}
+      </div>
+      <div class="modal-actions one">
+        <button id="cancelFolderPick" class="modal-btn">취소</button>
+      </div>`);
+    document.getElementById('cancelFolderPick').onclick=closeModal;
+    modalCard.querySelectorAll('[data-folder-choice]').forEach(btn=>{
+      btn.onclick=()=>{
+        const target=fileTargetMap[filename];
+        if(target!==btn.dataset.folderChoice){
+          showToast('파일 이름을 다시 확인해주세요.');
+          return;
+        }
+        const state=getState();
+        state.fileMoves=state.fileMoves||{};
+        state.fileMoves[filename]=target;
+        saveState(state);
+        closeModal();
+        showToast(`${target} 폴더로 이동했습니다.`);
+        if(Object.keys(state.fileMoves).length===files.length && !state.completed.files){
+          updateCompleted('files');
+        }
+        renderFiles(getState());
+      };
+    });
+  };
+
+  const renderFiles=(state)=>{
+    state.fileMoves=state.fileMoves||{};
+    state.random.fileOrder=state.random.fileOrder||shuffled(files.map(x=>x[0]));
+    state.random.folderOrder=state.random.folderOrder||shuffled(['회의자료','결재자료','인수인계']);
+    saveState(state);
+
+    const orderedFiles=state.random.fileOrder;
+
+    panel.innerHTML=`<div class="work-panel-card">
+      <div class="work-head"><h3>📁 자료 확인</h3><button class="back-btn" id="backWork">HOME</button></div>
+      <div class="small">분류되지 않은 파일을 선택한 뒤 알맞은 폴더로 이동하세요.</div>
+      <div class="shuffle-note">↻ 파일 순서는 새 게임마다 무작위로 배치됩니다.</div>
+
+      ${orderedFiles.map(f=>`<button class="file-item" data-file="${f}" style="width:100%;text-align:left">
+        <div class="file-card-action">
+          <div>
+            <strong>📄 ${f}</strong>
+            <div class="small">${state.fileMoves[f]?'✓ 분류 완료':'탭하여 이동할 폴더 선택'}</div>
+            ${f.includes('김퇴근')?`<span class="hint-tag">좌석번호 ${state.random.fileHint}</span>`:''}
+          </div>
+          <span class="file-chevron">›</span>
+        </div>
+      </button>`).join('')}
+
+      ${state.completed.files?'<div class="success-box">✓ 모든 자료를 정리했습니다.</div>':''}
+    </div>`;
+
+    document.getElementById('backWork').onclick=closePanel;
+    panel.querySelectorAll('.file-item').forEach(el=>{
+      el.onclick=()=>{
+        const f=el.dataset.file;
+        if(state.fileMoves[f]) return showToast('이미 분류한 파일입니다.');
+        showFolderPicker(f);
+      };
+    });
+  };
+
+  document.querySelectorAll('.task-card').forEach(card => card.addEventListener('click',()=>openPanel(card.dataset.task)));
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nav=btn.dataset.nav;
+      if(nav==='home') return closePanel();
+      if(['mail','approval','files'].includes(nav)) return openPanel(nav);
+      if(nav==='menu') return showResetGameConfirm();
+      showToast('사용할 수 없는 메뉴입니다.');
+    });
+  });
+
+  document.getElementById('bellBtn').addEventListener('click', () => {
+    showToast('새로운 알림이 없습니다.');
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    endingScreen.classList.remove('active');
+    homeScreen.classList.remove('active');
+    loginScreen.classList.add('active');
+    panel.style.display='none';
+    guideBox.style.display='block';
+    closeModal();
+    document.body.classList.remove('theme-evening','theme-night');
+    nameInput.value='';
+    document.getElementById('tomorrowToast').classList.remove('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  document.getElementById('checkoutBtn').addEventListener('click', () => {
+    const st = loadState();
+    if(st?.systemResolved && !st?.finalCheckoutComplete) showFinalCheckoutConfirm();
+    else if(st?.reportCompleted && !st?.secondCheckoutFailed) showSecondCheckoutConfirm();
+    else showCheckoutConfirm();
+  });
+
+  // v1.0: 모바일/PC 반응형, 저장 복원, 랜덤 퍼즐, 전체 스토리 흐름을 포함한 최종본입니다.
+  const existing = normalizeState(loadState());
+  if(existing){
+    saveState(existing);
+    if(existing.finalCheckoutComplete || existing.currentView==='ending'){
+      document.body.classList.remove('theme-evening','theme-night');
+      loginScreen.classList.remove('active');
+      homeScreen.classList.remove('active');
+      endingScreen.classList.add('active');
+      document.getElementById('tomorrowToast').classList.add('show');
+    }else{
+      enterHome(existing);
+      const view=existing.currentView;
+      setTimeout(()=>{
+        if(view==='mail'||view==='approval'||view==='files') openPanel(view);
+        else if(view==='handover' && existing.extraTaskUnlocked) openHandover();
+        else if(view==='report' && existing.secondTaskUnlocked) openReport();
+        else if(view==='system' && existing.thirdTaskUnlocked) openSystemTask();
+      },50);
+    }
+  }else{
+    applyTheme('day');
+  }
+})();
+</script>
+</body>
+</html>
